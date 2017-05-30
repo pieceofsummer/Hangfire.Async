@@ -3,7 +3,6 @@ using Hangfire.Server;
 using Hangfire.States;
 using Hangfire.Storage;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -37,7 +36,7 @@ namespace Hangfire.Async.Server.Infrastructure.Tasks
         #region Private constructors
 
         private static readonly ConstructorInfo ProcessingStateCtor = typeof(ProcessingState)
-            .GetTypeInfo().DeclaredConstructors.Where(x => !x.IsStatic).Single();
+            .GetTypeInfo().DeclaredConstructors.Single(x => !x.IsStatic);
 
         private static ProcessingState CreateProcessingState(string serverId, string workerId)
         {
@@ -45,11 +44,11 @@ namespace Hangfire.Async.Server.Infrastructure.Tasks
         }
 
         private static readonly ConstructorInfo SucceededStateCtor = typeof(SucceededState)
-            .GetTypeInfo().DeclaredConstructors.Where(x => !x.IsStatic).Single();
+            .GetTypeInfo().DeclaredConstructors.Single(x => !x.IsStatic);
         
         private static SucceededState CreateSucceededState(object result, long latency, long performanceDuration)
         {
-            return (SucceededState)SucceededStateCtor.Invoke(new object[] { result, latency, performanceDuration });
+            return (SucceededState)SucceededStateCtor.Invoke(new[] { result, latency, performanceDuration });
         }
 
         #endregion

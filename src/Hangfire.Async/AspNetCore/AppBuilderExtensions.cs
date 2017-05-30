@@ -2,14 +2,12 @@
 using Hangfire.Annotations;
 using Hangfire.Async.Server;
 using Hangfire.Server;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.AspNetCore.Builder
 {
     public static class AppBuilderExtensions

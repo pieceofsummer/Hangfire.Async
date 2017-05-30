@@ -31,6 +31,7 @@ namespace Hangfire.Async.Server.Infrastructure.Compatibility
             }
             catch
             {
+                // ignored
             }
 
             _process.Execute((BackgroundProcessContext)context);

@@ -2,7 +2,6 @@
 using Hangfire.Async.Server.Infrastructure;
 using Hangfire.Async.Server.Infrastructure.Compatibility;
 using Hangfire.Async.Server.Infrastructure.Tasks;
-using Hangfire.Async.Tasks;
 using Hangfire.Logging;
 using Hangfire.Server;
 using System;

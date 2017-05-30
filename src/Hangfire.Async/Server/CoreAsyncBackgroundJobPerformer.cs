@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Hangfire.Server;
 using System.Threading;
@@ -8,7 +7,6 @@ using Hangfire.Annotations;
 using System.Reflection;
 using Hangfire.Common;
 using System.Runtime.ExceptionServices;
-using Hangfire.Storage;
 
 namespace Hangfire.Async.Server
 {
@@ -30,18 +28,6 @@ namespace Hangfire.Async.Server
             _activator = activator;
         }
         
-        #region Private constructors
-
-        private static readonly ConstructorInfo JobActivatorContextCtor = typeof(JobActivatorContext)
-            .GetTypeInfo().DeclaredConstructors.Where(x => !x.IsStatic).Single();
-
-        private static JobActivatorContext CreateJobActivatorContext(IStorageConnection connection, BackgroundJob backgroundJob, IJobCancellationToken cancenllationToken)
-        {
-            return (JobActivatorContext)JobActivatorContextCtor.Invoke(new object[] { connection, backgroundJob, cancenllationToken });
-        }
-        
-        #endregion
-        
         public async Task<object> PerformAsync(PerformContext context)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
@@ -53,8 +39,7 @@ namespace Hangfire.Async.Server
             
             var method = job.Method;
 
-            using (var scope = _activator.BeginScope(CreateJobActivatorContext(
-                context.Connection, context.BackgroundJob, context.CancellationToken)))
+            using (var scope = _activator.BeginScope(new JobActivatorContext(context.Connection, context.BackgroundJob, context.CancellationToken)))
             {
                 object instance = null;
 
@@ -79,7 +64,7 @@ namespace Hangfire.Async.Server
                         if (task.Status != TaskStatus.RanToCompletion)
                         {
                             // task is not finished yet, wait for completion
-                            await task;
+                            await task.ConfigureAwait(false);
                         }
 
                         return GetTaskResult(task, method.ReturnType);
@@ -184,7 +169,7 @@ namespace Hangfire.Async.Server
 
             var method = GetTaskResultMethod.MakeGenericMethod(type.GenericTypeArguments);
 
-            return method.Invoke(null, new object[1] { task });
+            return method.Invoke(null, new object[] { task });
         }
         
         private static T GetTaskResultImpl<T>(Task task) => ((Task<T>)task).Result;

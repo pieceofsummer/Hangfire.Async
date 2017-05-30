@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Hangfire.Async.Filters
+﻿namespace Hangfire.Async.Filters
 {
     /// <summary>
     /// Implements a lightweight bi-directional iterator over collection of job filters, 

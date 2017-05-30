@@ -1,6 +1,5 @@
 ﻿using Hangfire.Annotations;
 using Hangfire.Async.Server.Infrastructure;
-using Hangfire.Async.Server.Infrastructure.Compatibility;
 using Hangfire.Async.Server.Infrastructure.Tasks;
 using Hangfire.Client;
 using Hangfire.Common;
@@ -10,7 +9,6 @@ using Hangfire.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Hangfire.Async.Server
 {

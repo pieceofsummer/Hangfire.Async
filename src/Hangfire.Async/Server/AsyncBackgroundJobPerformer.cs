@@ -8,7 +8,6 @@ using Hangfire.Logging;
 using Hangfire.Async.Filters;
 using System.Runtime.ExceptionServices;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace Hangfire.Async.Server
 {
@@ -48,11 +47,11 @@ namespace Hangfire.Async.Server
             private DualCursor _filters;
             private readonly IAsyncBackgroundJobPerformer _innerPerformer;
 
-            private PerformingContext _performingContext = null;
-            private PerformedContext _performedContext = null;
-            private ServerExceptionContext _exceptionContext = null;
+            private PerformingContext _performingContext;
+            private PerformedContext _performedContext;
+            private ServerExceptionContext _exceptionContext;
 
-            private IJobCancellationToken JobCT => _context.CancellationToken;
+            private IJobCancellationToken JobCancellationToken => _context.CancellationToken;
             
             public Performance(PerformContext context, object[] filters, IAsyncBackgroundJobPerformer innerPerformer)
             {
@@ -65,26 +64,6 @@ namespace Hangfire.Async.Server
                 _innerPerformer = innerPerformer;
             }
 
-            #region Private constructors
-
-            private static readonly ConstructorInfo PerformingContextCtor = typeof(PerformingContext)
-                .GetTypeInfo().DeclaredConstructors.Where(x => !x.IsStatic).Single();
-
-            private static PerformingContext CreatePerformingContext(PerformContext context)
-            {
-                return (PerformingContext)PerformingContextCtor.Invoke(new object[] { context });
-            }
-
-            private static readonly ConstructorInfo ServerExceptionContextCtor = typeof(ServerExceptionContext)
-                .GetTypeInfo().DeclaredConstructors.Where(x => !x.IsStatic).Single();
-
-            private static ServerExceptionContext CreateExceptionContext(PerformContext context, Exception exception)
-            {
-                return (ServerExceptionContext)ServerExceptionContextCtor.Invoke(new object[] { context, exception });
-            }
-
-            #endregion
-
             public async Task<object> PerformAsync()
             {
                 State state; object data;
@@ -94,11 +73,11 @@ namespace Hangfire.Async.Server
                     // Primary loop to handle job filters and background jobs
 
                     // SHOULD BE: _performingContext = new PerformingContext(_context);
-                    _performingContext = CreatePerformingContext(_context);
+                    _performingContext = new PerformingContext(_context);
 
                     try
                     {
-                        for (state = State.Begin, data = null; state != State.End; JobCT.ThrowIfCancellationRequested())
+                        for (state = State.Begin, data = null; state != State.End; JobCancellationToken.ThrowIfCancellationRequested())
                         {
                             // All processing is performed in a tight loop inside the following method.
                             // We'll only get back here sometimes to wait for the next Task to complete.
@@ -112,7 +91,7 @@ namespace Hangfire.Async.Server
                         // This is an exception from pre/post-processing phases. 
                         // Though it shouldn't be processed by other job filters,
                         // it still may be handled by exception filters.
-                        CoreAsyncBackgroundJobPerformer.HandleJobPerformanceException(ex, JobCT.ShutdownToken);
+                        CoreAsyncBackgroundJobPerformer.HandleJobPerformanceException(ex, JobCancellationToken.ShutdownToken);
                         throw;
                     }
 
@@ -129,7 +108,7 @@ namespace Hangfire.Async.Server
                     // Never intercept JobAbortException, it is supposed for internal use.
                     throw;
                 }
-                catch (OperationCanceledException) when (JobCT.ShutdownToken.IsCancellationRequested)
+                catch (OperationCanceledException) when (JobCancellationToken.ShutdownToken.IsCancellationRequested)
                 {
                     // Don't intercept OperationCancelledException after cancellation was requested.
                     throw;
@@ -139,9 +118,9 @@ namespace Hangfire.Async.Server
                     // Secondary loop to handle exception filters
 
                     // SHOULD BE: _exceptionContext = new ServerExceptionContext(_context, ex);
-                    _exceptionContext = CreateExceptionContext(_context, ex);
+                    _exceptionContext = new ServerExceptionContext(_context, ex);
 
-                    for (state = State.Begin, data = null; state != State.End; JobCT.ThrowIfCancellationRequested())
+                    for (state = State.Begin, data = null; state != State.End; JobCancellationToken.ThrowIfCancellationRequested())
                     {
                         await ExceptionFilters(ref state, ref data);
                     }

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Hangfire.Async.Filters
+﻿namespace Hangfire.Async.Filters
 {
     /// <summary>
-    /// Represents either sync or async job filter at given position in <see cref="JobFilterCursor"/>.
+    /// Represents either sync or async job filter at given position in <see cref="DualCursor"/>.
     /// </summary>
     /// <typeparam name="TSync">Sync interface type</typeparam>
     /// <typeparam name="TAsync">Async interface type</typeparam>
