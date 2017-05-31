@@ -125,8 +125,8 @@ namespace Hangfire.Async.Server
                 processes.Add(new WorkerTask(_options.Queues, performer, stateChanger).Loop().Wrap());
             }
             
-            processes.Add(new DelayedJobScheduler(_options.SchedulePollingInterval, stateChanger).Wrap());
-            processes.Add(new RecurringJobScheduler(factory).Wrap());
+            processes.Add(new DelayedJobScheduler(_options.SchedulePollingInterval, stateChanger).Loop().Wrap());
+            processes.Add(new RecurringJobScheduler(factory).Loop().Wrap());
             
             return processes;
         }

@@ -20,6 +20,13 @@ namespace Hangfire.Async.Server.Infrastructure
             return new InfiniteLoopTask(new AutomaticRetryTask(task));
         }
 
+        public static IBackgroundProcess Loop(this IBackgroundProcess process)
+        {
+            if (process == null) throw new ArgumentNullException(nameof(process));
+
+            return new InfiniteLoopProcess(new AutomaticRetryProcess(process));
+        }
+        
         public static ITaskSource Wrap(this IBackgroundTask task)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));

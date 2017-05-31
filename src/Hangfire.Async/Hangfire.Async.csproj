@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <DebugType>full</DebugType>
@@ -10,12 +9,10 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Hangfire.Core" Version="1.6.12" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.2" />
   </ItemGroup>
-
 </Project>
