@@ -15,16 +15,15 @@ namespace Hangfire.Async.Server.Infrastructure.Compatibility
             if (task == null) throw new ArgumentNullException(nameof(task));
 
             _task = task;
-            _taskScheduler = new ThreadBoundTaskScheduler(_task.Name);
+            _taskScheduler = null;
+            //_taskScheduler = new ThreadBoundTaskScheduler(_task.Name);
         }
 
         public Task CreateTask(BackgroundProcessContext context)
         {
             return Task.Factory.StartNew(
                 ExecuteAsync, context, 
-                context.CancellationToken, 
-                TaskCreationOptions.None, 
-                _taskScheduler);
+                context.CancellationToken);
         }
         
         private Task ExecuteAsync(object context)
@@ -34,7 +33,7 @@ namespace Hangfire.Async.Server.Infrastructure.Compatibility
         
         public void Dispose()
         {
-            _taskScheduler.Dispose();
+            _taskScheduler?.Dispose();
         }
     }
 }
