@@ -72,7 +72,7 @@ namespace Hangfire.Async.Server
 
             var processes = new List<ITaskSource>();
             processes.AddRange(GetRequiredProcesses());
-            processes.AddRange(additionalProcesses.Select(ExtensionMethods.Wrap));
+            processes.AddRange(additionalProcesses.Select(ExtensionMethods.Loop).Select(ExtensionMethods.Wrap));
 
             var properties = new Dictionary<string, object>
             {
