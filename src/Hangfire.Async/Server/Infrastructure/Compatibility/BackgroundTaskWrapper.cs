@@ -22,8 +22,8 @@ namespace Hangfire.Async.Server.Infrastructure.Compatibility
         public Task CreateTask(BackgroundProcessContext context)
         {
             return Task.Factory.StartNew(
-                ExecuteAsync, context, 
-                context.CancellationToken);
+                ExecuteAsync, context,
+                TaskCreationOptions.LongRunning);
         }
         
         private Task ExecuteAsync(object context)
