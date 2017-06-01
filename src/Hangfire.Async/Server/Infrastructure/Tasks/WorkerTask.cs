@@ -99,7 +99,7 @@ namespace Hangfire.Async.Server.Infrastructure.Tasks
                     // it was performed to guarantee that it was performed AT LEAST once.
                     // It will be re-queued after the JobTimeout was expired.
 
-                    var state = await PerformJob(context, connection, fetchedJob.JobId);
+                    var state = await PerformJob(context, connection, fetchedJob.JobId).ConfigureAwait(false);
 
                     if (state != null)
                     {
@@ -170,7 +170,7 @@ namespace Hangfire.Async.Server.Infrastructure.Tasks
                 var latency = (DateTime.UtcNow - jobData.CreatedAt).TotalMilliseconds;
                 var duration = Stopwatch.StartNew();
 
-                var result = await _performer.PerformAsync(performContext);
+                var result = await _performer.PerformAsync(performContext).ConfigureAwait(false);
                 duration.Stop();
 
                 // SHOULD BE: return new SucceededState(result, (long)latency, duration.ElapsedMilliseconds);

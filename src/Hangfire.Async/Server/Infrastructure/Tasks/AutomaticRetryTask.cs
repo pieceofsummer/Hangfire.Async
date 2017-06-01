@@ -39,7 +39,7 @@ namespace Hangfire.Async.Server.Infrastructure.Tasks
             {
                 try
                 {
-                    await InnerTask.ExecuteAsync(context);
+                    await InnerTask.ExecuteAsync(context).ConfigureAwait(false);
                     return;
                 }
                 catch (OperationCanceledException) when (context.IsShutdownRequested)
@@ -60,7 +60,7 @@ namespace Hangfire.Async.Server.Infrastructure.Tasks
                         () => $"Error occurred during execution of '{InnerTask}' process. Execution will be retried (attempt {i + 1} of {MaxRetryAttempts}) in {nextTry} seconds.",
                         ex);
 
-                    await Task.Delay(nextTry, context.CancellationToken);
+                    await Task.Delay(nextTry, context.CancellationToken).ConfigureAwait(false);
 
                     if (context.IsShutdownRequested)
                     {

@@ -21,7 +21,7 @@ namespace Hangfire.Async.Server.Infrastructure.Tasks
         {
             while (!context.IsShutdownRequested)
             {
-                await InnerTask.ExecuteAsync(context);
+                await InnerTask.ExecuteAsync(context).ConfigureAwait(false);
             }
         }
 

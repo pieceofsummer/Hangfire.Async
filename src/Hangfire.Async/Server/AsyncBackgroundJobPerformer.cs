@@ -83,7 +83,7 @@ namespace Hangfire.Async.Server
                             // We'll only get back here sometimes to wait for the next Task to complete.
                             // For performance's sake, we'll only await for really unfinished jobs 
                             // (i.e. not constanst/cached/finished ones like Task.FromResult() etc.)
-                            await JobFilters(ref state, ref data);
+                            await JobFilters(ref state, ref data).ConfigureAwait(false);
                         }
                     }
                     catch (Exception ex)
@@ -122,7 +122,7 @@ namespace Hangfire.Async.Server
 
                     for (state = State.Begin, data = null; state != State.End; JobCancellationToken.ThrowIfCancellationRequested())
                     {
-                        await ExceptionFilters(ref state, ref data);
+                        await ExceptionFilters(ref state, ref data).ConfigureAwait(false);
                     }
 
                     if (!_exceptionContext.ExceptionHandled)
