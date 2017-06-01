@@ -86,7 +86,8 @@ namespace Hangfire.Async.Server
             _options = options;
 
             _processes.AddRange(GetRequiredTasks().Select(ExtensionMethods.Wrap));
-            _processes.AddRange(storage.GetComponents().Select(ExtensionMethods.Wrap));
+            _processes.AddRange(storage.GetComponents().OfType<IBackgroundProcess>()
+                .Select(ExtensionMethods.Loop).Select(ExtensionMethods.Wrap));
             _processes.AddRange(processes);
 
             var context = new BackgroundProcessContext(
