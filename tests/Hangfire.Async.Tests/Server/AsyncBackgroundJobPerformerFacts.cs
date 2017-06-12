@@ -27,7 +27,7 @@ namespace Hangfire.Async.Tests.Server
 
             _innerPerformer = new Mock<IAsyncBackgroundJobPerformer>();
             _innerPerformer.Setup(x => x.PerformAsync(It.IsAny<PerformContext>()))
-                .ReturnsAsync(null);
+                .ReturnsAsync(() => null);
 
             _filters = new List<object>();
             _filterProvider = new Mock<IJobFilterProvider>();

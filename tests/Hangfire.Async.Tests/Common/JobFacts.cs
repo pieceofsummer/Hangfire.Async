@@ -120,12 +120,12 @@ namespace Hangfire.Async.Tests.Common
 
             public async Task FunctionReturningTask()
             {
-                await Task.Yield();
+                await Task.Delay(100);
             }
 
             public async Task<string> FunctionReturningTaskResultingInString()
             {
-                await Task.Yield();
+                await Task.Delay(100);
 
                 return FunctionReturningValue();
             }
